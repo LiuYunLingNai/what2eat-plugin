@@ -4,6 +4,7 @@ import {
   randomRecipe,
   findRecipe,
   getRecipeMarkdown,
+  getRecipeImageUrl,
   getOriginLink,
   getVideoLink,
 } from '../lib/data.js'
@@ -113,10 +114,20 @@ export default class What2Eat extends plugin {
     const catLabel = selected && selected.length ? selected.join('、') : '全部'
     const text = this._md('今天就吃 👉 ' + recipe.name, [
       `当前筛选：${catLabel}（分类：${recipe.category || '未知'}）`,
-      '点「看做法」出图，「看视频」去 B 站搜教程',
+      '点做法教你做，「看视频」去 B 站搜教程',
     ])
 
-    const msg = [text]
+    // 预览图（从做法 md 解析，可能没有）
+    let imgUrl = null
+    try {
+      imgUrl = await getRecipeImageUrl(recipe)
+    } catch {
+      imgUrl = null
+    }
+
+    const msg = []
+    if (imgUrl) msg.push(segment.image(imgUrl))
+    msg.push(text)
     const btn = await this._recommendButtons(recipe)
     if (btn) msg.push(btn)
     return e.reply(msg)
