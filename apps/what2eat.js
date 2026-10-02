@@ -4,7 +4,7 @@ import {
   randomRecipe,
   findRecipe,
   getRecipeMarkdown,
-  getRecipeImageUrl,
+  getRecipeImageFile,
   getOriginLink,
   getVideoLink,
 } from '../lib/data.js'
@@ -15,6 +15,7 @@ import {
   toggleSelection,
   clearSelection,
 } from '../lib/selection.js'
+import { getConfig } from '../lib/config.js'
 
 // 分类分隔符：+ 、 , ， / 空格
 const CAT_SEP = /[+、,，/\s]+/
@@ -117,16 +118,18 @@ export default class What2Eat extends plugin {
       '点做法教你做，「看视频」去 B 站搜教程',
     ])
 
-    // 预览图（从做法 md 解析，可能没有）
-    let imgUrl = null
-    try {
-      imgUrl = await getRecipeImageUrl(recipe)
-    } catch {
-      imgUrl = null
+    // 预览图：下载到本地再发，避免图床慢/失败（可配置关闭；可能没有图）
+    let imgFile = null
+    if (getConfig().showPreviewImage !== false) {
+      try {
+        imgFile = await getRecipeImageFile(recipe)
+      } catch {
+        imgFile = null
+      }
     }
 
     const msg = []
-    if (imgUrl) msg.push(segment.image(imgUrl))
+    if (imgFile) msg.push(segment.image(imgFile))
     msg.push(text)
     const btn = await this._recommendButtons(recipe)
     if (btn) msg.push(btn)
@@ -260,10 +263,12 @@ export default class What2Eat extends plugin {
     }
 
     cleanupRenders()
-    const imgSeg = await renderRecipeImage(md, {
-      category: recipe.category,
-      source: recipe.source_path,
-    })
+    const imgSeg = getConfig().renderRecipeImage === false
+      ? null
+      : await renderRecipeImage(md, {
+          category: recipe.category,
+          source: recipe.source_path,
+        })
 
     const btnRow = this._canButton()
       ? segment.button([
