@@ -43,10 +43,24 @@ git clone https://github.com/LiuYunLingNai/what2eat-plugin.git ./plugins/what2ea
 - 分类筛选面板：点分类按钮增减筛选（已选项带 ✅），再点 **🎲 随机** 抽一道
 - 非 QQBot 平台自动降级为纯文本，指令照常可用
 
+## 配置
+
+支持 [锅巴（Guoba）](https://github.com/guoba-yunzai/guoba-plugin) 面板可视化配置，也可直接编辑 `<Yunzai>/data/what2eat/config.json`：
+
+| 配置项 | 说明 | 默认 |
+| --- | --- | --- |
+| `mirror` | 资源镜像：`auto` / `raw` / `fastly` / `ghproxy` / `jsdelivr` | `auto` |
+| `ghproxyBase` | 当 `mirror=ghproxy` 时使用的代理前缀 | `https://ghp.lyln114514.top/` |
+| `showPreviewImage` | 出菜结果是否带菜品预览图 | `true` |
+| `renderRecipeImage` | `#做法xx` 是否渲染成图片（否则发文本） | `true` |
+
+> jsDelivr 国内常慢或失败，建议用 `auto`（内置优先级：raw → fastly → ghproxy → jsdelivr）或直接选 `raw`；网络不佳可选 `ghproxy` 并填自己的代理地址。
+
 ## 数据与缓存
 
 - 菜谱清单：`https://eat.ryanuo.cc/recipes.json`（缓存 24 小时）
-- 做法正文：HowToCook 仓库 markdown（jsdelivr / raw.githubusercontent / gitmirror 三源容错，缓存 7 天）
+- 做法正文：HowToCook 仓库 markdown（多镜像容错，缓存 7 天）
+- 菜品图片：按配置镜像下载到本地（缓存 30 天），渲染/发送均用本地文件，不依赖远程图床
 - 缓存目录：`<Yunzai>/data/what2eat/`
 
 ## 致谢
