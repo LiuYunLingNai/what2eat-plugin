@@ -1,0 +1,17 @@
+{
+  "name": "what2eat-plugin",
+  "version": "1.0.0",
+  "description": "今天吃什么 - TRSS-Yunzai 随机菜谱推荐插件（数据来自 HowToCook / eat.ryanuo.cc）",
+  "main": "index.js",
+  "type": "module",
+  "author": "",
+  "license": "MIT",
+  "keywords": [
+    "TRSS-Yunzai",
+    "Yunzai",
+    "what2eat",
+    "吃什么",
+    "菜谱"
+  ],
+  "dependencies": {}
+}
